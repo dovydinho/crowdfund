@@ -1,7 +1,8 @@
 {
   "root": true,
   "project": {
-    "name": "crowdfund"
+    "name": "crowdfund",
+    "basePath": "/sanity"
   },
   "api": {
     "projectId": "5g5yeo59",
@@ -15,9 +16,7 @@
   ],
   "env": {
     "development": {
-      "plugins": [
-        "@sanity/vision"
-      ]
+      "plugins": ["@sanity/vision"]
     }
   },
   "parts": [
