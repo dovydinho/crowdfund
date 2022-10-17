@@ -62,8 +62,8 @@ const Create: NextPageWithLayout = () => {
       );
       await newProjectContract.deployTransaction.wait();
       saveProject(data.title, data.body, newProjectContract.address);
-      setButtonLoading(false);
-      router.push(`/projects/${newProjectContract.address}`);
+      router.push('/');
+      // router.push(`/projects/${newProjectContract.address}`);
     } catch {
       setButtonLoading(false);
       console.log('Operation failed.');

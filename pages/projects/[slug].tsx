@@ -1,11 +1,4 @@
-import type {
-  GetServerSideProps,
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetServerSidePropsType,
-  InferGetStaticPropsType,
-  NextPage
-} from 'next';
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -24,7 +17,6 @@ import { NextPageWithLayout, Project as ProjectTyping } from '@base/typings';
 const Project: NextPageWithLayout = ({
   projectSanityData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  console.log(projectSanityData);
   const [address, setAddress] = useState(null);
   const [projectData, setProjectData] = useState([]);
   const [projectContract, setProjectContract] = useState(null);
@@ -371,30 +363,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   };
 };
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const query = `*[_type == "projects"] { address }`;
-//   const projects = await sanityClient.fetch(query);
-//   const paths = projects.map((project: ProjectTyping) => ({
-//     params: { slug: project.address }
-//   }));
-
-//   return {
-//     paths,
-//     fallback: false // throw 404 if address does not exist
-//   };
-// };
-
-// export const getStaticProps: GetStaticProps = async (context) => {
-//   const slug = context?.params?.slug;
-//   const query = `*[_type == "projects" && address == "${slug}"]`;
-//   const projectSanityData = await sanityClient.fetch(query);
-//   return {
-//     props: {
-//       projectSanityData
-//     }
-//   };
-// };
 
 const List = ({ items, type, owner, onRemoveContributorSubmit }) => {
   const { hooks } = useWeb3();
