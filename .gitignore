@@ -47,7 +47,6 @@ artifacts
 #Helper files
 .prettierrc.js
 keys.json
-typings.d.ts
 
 #CMS
 sanity
