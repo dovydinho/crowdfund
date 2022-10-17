@@ -1,0 +1,425 @@
+import type {
+  GetStaticPaths,
+  GetStaticProps,
+  InferGetStaticPropsType,
+  NextPage
+} from 'next';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { ethers } from 'ethers';
+import Moment from 'react-moment';
+import { now } from 'moment';
+
+import { MainLayout } from '@components/ui/layouts';
+import { useWeb3 } from '@components/web3';
+import { Button, DangerButton, LoadingButton } from '@components/ui/common';
+import { Edit } from '@components/ui/auth';
+import { sanityClient, urlFor } from '@base/sanity';
+import { NextPageWithLayout, Project as ProjectTyping } from '@base/typings';
+
+const Project: NextPageWithLayout = ({
+  projectSanityData
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const [address, setAddress] = useState(null);
+  const [projectData, setProjectData] = useState([]);
+  const [projectContract, setProjectContract] = useState(null);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [amount, setAmount] = useState();
+  const router = useRouter();
+  const { provider, hooks } = useWeb3();
+  const account = hooks.useAccount();
+
+  const slug = router.query.slug;
+
+  useEffect(() => {
+    const init = async () => {
+      const res = await fetch(
+        '/artifacts/contracts/Crowdfund.sol/ProjectCrowdfund.json'
+      );
+      const Artifacts = await res.json();
+      const projectContractInstance = new ethers.Contract(
+        slug as string,
+        Artifacts.abi,
+        provider
+      );
+
+      setProjectContract(projectContractInstance);
+      const data = await projectContractInstance?.getSummary();
+      setProjectData(data);
+    };
+    provider && ethers.utils.isAddress(slug as string) && init();
+  }, [provider, slug]);
+
+  const handleAmountChange = (e) => {
+    setAmount(e.target.value);
+  };
+  const handleAddressChange = (e) => {
+    setAddress(e.target.value);
+  };
+
+  const sponsor = async () => {
+    const txSigner = provider.getSigner(account.data);
+    const tx = {
+      to: projectContract.address,
+      value: ethers.utils.parseUnits(amount, 'ether')
+    };
+    try {
+      const sponsorTX = await txSigner.sendTransaction(tx);
+      await sponsorTX.wait();
+      const data = await projectContract?.getSummary();
+      sanityClient
+        .patch(projectSanityData[0]?._id)
+        .set({ sponsorsCount: Number(data[5]) })
+        .commit();
+      setButtonLoading(false);
+    } catch (e) {
+      setButtonLoading(false);
+      console.log('Operation failed.');
+    }
+  };
+
+  const onSponsorSubmit = (e) => {
+    e.preventDefault();
+    setButtonLoading(true);
+    sponsor();
+  };
+
+  const addContributor = async () => {
+    const txSigner = provider.getSigner(account.data);
+    const projectContractWithSigner = projectContract.connect(txSigner);
+    try {
+      const tx = await projectContractWithSigner.addContributor(address);
+      await tx.wait();
+      const data = await projectContract?.getSummary();
+      sanityClient
+        .patch(projectSanityData[0]?._id)
+        .set({ contributorsCount: Number(data[7]) })
+        .commit();
+    } catch (err) {
+      console.log('Operation failed.');
+    }
+  };
+
+  const onAddContributorSubmit = (e) => {
+    e.preventDefault();
+    if (ethers.utils.isAddress(address)) {
+      addContributor();
+    } else alert(`${address} is NOT a valid address`);
+  };
+
+  const removeContributor = async (contributorAddress) => {
+    const txSigner = provider.getSigner(account.data);
+    const projectContractWithSigner = projectContract.connect(txSigner);
+    try {
+      const tx = await projectContractWithSigner.removeContributor(
+        contributorAddress
+      );
+      await tx.wait();
+      const data = await projectContract?.getSummary();
+      sanityClient
+        .patch(projectSanityData[0]?._id)
+        .set({ contributorsCount: Number(data[7]) })
+        .commit();
+    } catch (err) {
+      console.log('Operation failed.');
+    }
+  };
+
+  const onRemoveContributorSubmit = (e, contributorAddress) => {
+    e.preventDefault();
+    removeContributor(contributorAddress);
+  };
+
+  const unlockAmount = async () => {
+    const txSigner = provider.getSigner(account.data);
+    const projectContractWithSigner = projectContract.connect(txSigner);
+    try {
+      await projectContractWithSigner.unclockAmount();
+    } catch (err) {
+      console.log('Operation failed.');
+    }
+  };
+  const distributeUnlockedAmount = async () => {
+    const txSigner = provider.getSigner(account.data);
+    const projectContractWithSigner = projectContract.connect(txSigner);
+    try {
+      await projectContractWithSigner.distribute();
+    } catch (err) {
+      console.log('Operation failed.');
+    }
+  };
+
+  return (
+    <>
+      <Head>
+        <title>Create Next App</title>
+        <meta name="description" content="Generated by create next app" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main className="container">
+        <div>
+          <div className="bg-gray-900/10 h-80 relative z-0 rounded-lg overflow-hidden">
+            {projectSanityData[0].backgroundImage.asset._ref && (
+              <Image
+                src={urlFor(projectSanityData[0].backgroundImage).url()}
+                layout="fill"
+                alt="Background Image"
+              />
+            )}
+          </div>
+          <div className="flex items-center justify-center h-36 w-36 mx-auto -mt-16 rounded-full bg-gray-900 outline outline-8 outline-gray-100/20 relative">
+            {projectSanityData[0].avatarImage.asset._ref && (
+              <Image
+                src={urlFor(projectSanityData[0].avatarImage).url()}
+                layout="fill"
+                className="rounded-full"
+                alt="Avatar Image"
+              />
+            )}
+          </div>
+          <div className="mt-8 px-4 max-w-xl mx-auto">
+            <div className="flex gap-4 justify-center text-gray-300 ">
+              <p>
+                0x
+                {projectData[1] &&
+                  projectData[1].slice(2, 6) +
+                    `-` +
+                    projectData[1].slice(38, 42)}
+              </p>
+              <p>
+                {projectData[3] &&
+                  ethers.utils.formatEther(projectData[3]).toString()}
+                {' ETH / Week'}
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <h1 className="text-3xl font-bold tracking-widest uppercase">
+                {projectSanityData[0].title}
+              </h1>
+              <Edit project={projectSanityData[0]} account={account.data} />
+            </div>
+
+            <p className="text-xl text-gray-300 mt-2 overflow-auto pt-4 pb-8">
+              {projectSanityData[0].body}
+            </p>
+
+            {account.data && (
+              <>
+                <div className="w-full font-bold text-center tracking-widest uppercase my-12">
+                  <div className="flex justify-center">
+                    {projectData[2] && (
+                      <h1 className="text-7xl flex items-center">
+                        {ethers.utils.formatEther(projectData[2]).toString()}
+                      </h1>
+                    )}
+
+                    <div className="text-left text-2xl pt-2 my-auto">
+                      <h3>ETH</h3>
+                      <h3>Balance</h3>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p>
+                      Next unlock available{' '}
+                      {projectData[8] && (
+                        <Moment fromNow>
+                          {parseInt(projectData[8]) * 1000}
+                        </Moment>
+                      )}
+                    </p>
+                    {projectData[0] &&
+                      account.data == projectData[0] &&
+                      parseInt(projectData[8]) * 1000 < now() && (
+                        <div className="border bg-gray-100/10 border-gray-100/5 py-8 my-4 rounded-lg">
+                          <p className="mb-4">
+                            Unlocked amount:{' '}
+                            {ethers.utils
+                              .formatEther(projectData[9])
+                              .toString()}{' '}
+                            ETH
+                          </p>
+                          <Button onClick={unlockAmount} name="Unlock" />
+                        </div>
+                      )}
+                    {projectData[0] &&
+                      account.data == projectData[0] &&
+                      Number(ethers.utils.formatEther(projectData[9])) > 0 && (
+                        <div className="border bg-green-500/50 border-gray-100/5 py-8 my-4 rounded-lg">
+                          <p className="mb-4">
+                            Unlocked amount:{' '}
+                            {ethers.utils
+                              .formatEther(projectData[9])
+                              .toString()}{' '}
+                            ETH
+                          </p>
+                          <Button
+                            onClick={distributeUnlockedAmount}
+                            name="Distribute"
+                          />
+                        </div>
+                      )}
+                  </div>
+                </div>
+                <form onSubmit={onSponsorSubmit}>
+                  <div className="flex gap-4">
+                    <input
+                      required
+                      type="number"
+                      min=".000001"
+                      placeholder="0.000001"
+                      step=".000001"
+                      name="amount"
+                      onChange={handleAmountChange}
+                      className="w-1/2 p-2 rounded-lg bg-gray-100/20 focus:bg-gray-100/25 border border-gray-100/5 focus:outline-none"
+                    />
+                    {account.data && buttonLoading ? (
+                      <LoadingButton name="Sponsor" />
+                    ) : (
+                      <Button name="Sponsor" />
+                    )}
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
+
+          {account.data && (
+            <div className="mt-14 flex gap-8 text-xl">
+              <div className="w-1/2">
+                <div className="flex justify-between mb-4">
+                  <h1>Contributors</h1>
+                  <h1 className="text-gray-300">
+                    Total: {projectSanityData[0]?.contributorsCount}
+                  </h1>
+                </div>
+                {
+                  <List
+                    items={projectData[6]}
+                    type="contributors"
+                    owner={projectData[0]}
+                    onRemoveContributorSubmit={onRemoveContributorSubmit}
+                  />
+                }
+                {projectData[0] == account.data && (
+                  <form onSubmit={onAddContributorSubmit}>
+                    <div className="mt-4 flex gap-4">
+                      <input
+                        required
+                        type="text"
+                        name="address"
+                        placeholder="0x..."
+                        onChange={handleAddressChange}
+                        className="w-2/3 p-2 rounded-lg bg-gray-100/20 focus:bg-gray-100/25 border border-gray-100/5 focus:outline-none"
+                      />
+                      <Button
+                        type="submit"
+                        className="w-1/3 text-base"
+                        name="Add Contributor"
+                      />
+                    </div>
+                  </form>
+                )}
+              </div>
+              <div className="w-1/2">
+                <div className="flex justify-between mb-4">
+                  <h1>Sponsors</h1>
+                  <h1 className="text-gray-300">
+                    Total: {projectSanityData[0]?.sponsorsCount}
+                  </h1>
+                </div>
+                {
+                  <List
+                    items={projectData[4]}
+                    type="sponsors"
+                    owner={projectData[0]}
+                    onRemoveContributorSubmit={null}
+                  />
+                }
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+
+      <footer></footer>
+    </>
+  );
+};
+
+export default Project;
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const query = `*[_type == "projects"] { address }`;
+  const projects = await sanityClient.fetch(query);
+  const paths = projects.map((project: ProjectTyping) => ({
+    params: { slug: project.address }
+  }));
+
+  return {
+    paths,
+    fallback: false // throw 404 if address does not exist
+  };
+};
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const slug = context?.params?.slug;
+  const query = `*[_type == "projects" && address == "${slug}"]`;
+  const projectSanityData = await sanityClient.fetch(query);
+  return {
+    props: {
+      projectSanityData
+    }
+  };
+};
+
+const List = ({ items, type, owner, onRemoveContributorSubmit }) => {
+  const { hooks } = useWeb3();
+  const account = hooks.useAccount();
+  return (
+    <ul className="border-t border-x border-gray-100/5 rounded-lg overflow-hidden">
+      {items &&
+        items.map((item, i) => {
+          return (
+            <li
+              className="flex justify-between bg-gray-100/10 border-b border-gray-100/5 p-6"
+              key={i}
+            >
+              <p>0x{item[0].slice(2, 6) + `-` + item[0].slice(38, 42)}</p>
+
+              {owner && item[0] == owner && (
+                <p className="bg-gray-100/10 border border-gray-100/5 text-base rounded-lg p-2 -my-2">
+                  Project Owner
+                </p>
+              )}
+              {type == 'contributors' &&
+                owner &&
+                account &&
+                owner == account.data &&
+                owner != item[0] && (
+                  <form onSubmit={(e) => onRemoveContributorSubmit(e, item[0])}>
+                    <DangerButton
+                      type="submit"
+                      className="-my-3"
+                      name="Remove"
+                    />
+                  </form>
+                )}
+              {type == 'sponsors' && (
+                <p>{ethers.utils.formatEther(item[1]).toString()} ETH</p>
+              )}
+            </li>
+          );
+        })}
+      {items && items.length == 0 && (
+        <li className="bg-gray-800/10 border-b border-gray-100/5 p-6 text-center">
+          There are no sponsors for this project
+        </li>
+      )}
+    </ul>
+  );
+};
+
+Project.Layout = MainLayout;
