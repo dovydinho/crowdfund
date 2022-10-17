@@ -42,7 +42,11 @@ typechain-types
 
 #Hardhat files
 cache
-artifacts
+/public/artifacts/build-info
+/public/artifacts/hardhat
+/public/artifacts/contracts/Lock.sol
+/public/artifacts/contracts/Crowdfund.sol/ProjectCrowdfund.dbg.json
+/public/artifacts/contracts/Crowdfund.sol/ProjectCrowdfundFactory.dbg.json
 
 #Helper files
 .prettierrc.js
