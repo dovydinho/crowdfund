@@ -1,6 +1,8 @@
 import type {
+  GetServerSideProps,
   GetStaticPaths,
   GetStaticProps,
+  InferGetServerSidePropsType,
   InferGetStaticPropsType,
   NextPage
 } from 'next';
@@ -21,7 +23,8 @@ import { NextPageWithLayout, Project as ProjectTyping } from '@base/typings';
 
 const Project: NextPageWithLayout = ({
   projectSanityData
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  console.log(projectSanityData);
   const [address, setAddress] = useState(null);
   const [projectData, setProjectData] = useState([]);
   const [projectContract, setProjectContract] = useState(null);
@@ -351,29 +354,47 @@ const Project: NextPageWithLayout = ({
 
 export default Project;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const query = `*[_type == "projects"] { address }`;
-  const projects = await sanityClient.fetch(query);
-  const paths = projects.map((project: ProjectTyping) => ({
-    params: { slug: project.address }
-  }));
-
-  return {
-    paths,
-    fallback: false // throw 404 if address does not exist
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const slug = context?.params?.slug;
   const query = `*[_type == "projects" && address == "${slug}"]`;
   const projectSanityData = await sanityClient.fetch(query);
+
+  if (projectSanityData.length === 0) {
+    return {
+      notFound: true
+    };
+  }
+
   return {
     props: {
       projectSanityData
     }
   };
 };
+
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const query = `*[_type == "projects"] { address }`;
+//   const projects = await sanityClient.fetch(query);
+//   const paths = projects.map((project: ProjectTyping) => ({
+//     params: { slug: project.address }
+//   }));
+
+//   return {
+//     paths,
+//     fallback: false // throw 404 if address does not exist
+//   };
+// };
+
+// export const getStaticProps: GetStaticProps = async (context) => {
+//   const slug = context?.params?.slug;
+//   const query = `*[_type == "projects" && address == "${slug}"]`;
+//   const projectSanityData = await sanityClient.fetch(query);
+//   return {
+//     props: {
+//       projectSanityData
+//     }
+//   };
+// };
 
 const List = ({ items, type, owner, onRemoveContributorSubmit }) => {
   const { hooks } = useWeb3();
