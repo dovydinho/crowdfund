@@ -20,7 +20,7 @@ export default function Footer({}: Props) {
   };
   return (
     <div className="flex flex-col mt-24 items-center justify-center">
-      <h1 className="uppercase tracking-widest text-3xl text-gray-100/25 my-4">
+      <h1 className="uppercase tracking-widest text-xl sm:text-3xl text-gray-100/25 my-4">
         <span>{text}</span>
         <Cursor cursorColor="orange" />
       </h1>

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 export default function MainLayout({ children }) {
   return (
     <Web3Provider>
-      <main className="container min-h-screen max-w-7xl pb-12 overflow-hidden">
+      <main className="container min-h-screen max-w-7xl pb-12 overflow-hidden px-2">
         <motion.div
           initial={{ x: 0, opacity: 0, scale: 0.5 }}
           animate={{ x: 0, opacity: 1, scale: 1 }}

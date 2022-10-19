@@ -131,7 +131,7 @@ const Create: NextPageWithLayout = () => {
         <section className="my-10">
           <div className="lg:flex gap-8">
             <div className="w-full lg:w-1/2 xl:w-3/5">
-              <h1 className="text-4xl text-center py-8 tracking-widest">
+              <h1 className="text-3xl sm:text-4xl text-center py-8 tracking-widest">
                 Create New Project
               </h1>
               <form onSubmit={handleSubmit(onSubmit)} className="p-1">
@@ -297,7 +297,7 @@ const Create: NextPageWithLayout = () => {
                 ))}
             </div>
 
-            <div className="w-full lg:w-1/2 xl:w-2/5 py-8 px-16">
+            <div className="w-full lg:w-1/2 xl:w-2/5 py-8 px-8 sm:px-24 md:px-36 lg:px-16">
               <h1 className="text-3xl text-center py-8 tracking-widest">
                 Live Preview
               </h1>

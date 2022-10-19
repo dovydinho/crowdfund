@@ -149,7 +149,7 @@ const Project: NextPageWithLayout = ({
     <>
       <main className="container">
         <div>
-          <div className="bg-gray-900/10 h-80 relative z-0 rounded-lg overflow-hidden">
+          <div className="bg-gray-900/10 h-36 sm:h-48 md:h-54 lg:h-80 relative z-0 rounded-lg overflow-hidden">
             {projectSanityData[0].backgroundImage.asset._ref && (
               <Image
                 src={urlFor(projectSanityData[0].backgroundImage).url()}
@@ -184,7 +184,7 @@ const Project: NextPageWithLayout = ({
               </p>
             </div>
             <div className="flex justify-center">
-              <h1 className="text-3xl font-bold tracking-widest uppercase">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-widest uppercase">
                 {projectSanityData[0].title}
               </h1>
               <Edit project={projectSanityData[0]} account={account.data} />
@@ -276,8 +276,8 @@ const Project: NextPageWithLayout = ({
           </div>
 
           {account.data && (
-            <div className="mt-14 flex gap-8 text-xl">
-              <div className="w-1/2">
+            <div className="mt-14 flex flex-col sm:flex-row gap-8 text-xl">
+              <div className="w-full sm:w-1/2">
                 <div className="flex justify-between mb-4">
                   <h1>Contributors</h1>
                   <h1 className="text-gray-300">
@@ -312,7 +312,7 @@ const Project: NextPageWithLayout = ({
                   </form>
                 )}
               </div>
-              <div className="w-1/2">
+              <div className="w-full sm:w-1/2">
                 <div className="flex justify-between mb-4">
                   <h1>Sponsors</h1>
                   <h1 className="text-gray-300">

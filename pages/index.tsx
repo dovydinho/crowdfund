@@ -20,12 +20,15 @@ interface Props {
 }
 
 const Home = ({ projectsCollection }: Props) => {
+  const [hydrated, setHydrated] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
 
   const filteredProjects = projectsCollection.filter((project) =>
     project?.title.toLowerCase().includes(searchValue.toLowerCase())
   );
+
+  useEffect(() => setHydrated(true), []);
 
   useEffect(() => {
     const keyDownHandler = (e: any) => {
@@ -38,6 +41,10 @@ const Home = ({ projectsCollection }: Props) => {
       document.removeEventListener('keydown', keyDownHandler);
     };
   }, []);
+
+  if (!hydrated) {
+    return null;
+  }
 
   return (
     <>
@@ -107,7 +114,7 @@ const Home = ({ projectsCollection }: Props) => {
         {projectsCollection.length > 0 ? (
           <section className="mt-12">
             <Swiper
-              slidesPerView={3}
+              // slidesPerView={3}
               spaceBetween={20}
               slidesPerGroup={1}
               loop={true}
@@ -118,6 +125,17 @@ const Home = ({ projectsCollection }: Props) => {
               }}
               navigation={true}
               modules={[Pagination, Navigation]}
+              breakpoints={{
+                640: {
+                  slidesPerView: 1
+                },
+                768: {
+                  slidesPerView: 2
+                },
+                1024: {
+                  slidesPerView: 3
+                }
+              }}
             >
               {projectsCollection.map((project, i) => (
                 <SwiperSlide key={i}>

@@ -31,15 +31,16 @@ export default function Navbar() {
   return (
     <>
       <nav className="flex justify-between py-8">
-        <div className="flex gap-2 text-xl">
+        <div className="flex gap-2 text-base sm:text-xl">
           <Link href="/">
-            <a className="my-auto text-3xl">Crowdfund</a>
+            <a className="my-auto text-xl sm:text-3xl">Crowdfund</a>
           </Link>
           <NavItem href="/create" text="New Project" />
         </div>
         <div className="flex gap-4">
           {account.data ? (
             <Button
+              className="text-sm"
               name={account.data.slice(2, 6) + `-` + account.data.slice(38, 42)}
             />
           ) : requireInstall ? (
