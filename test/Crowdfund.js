@@ -112,7 +112,7 @@ describe('ProjectCrowdfunds', function () {
         expect(await projectCrowdfund.contributorsCount()).to.equal(1);
       });
 
-      it('Should edit target string', async function () {
+      it('Should edit target', async function () {
         projectCrowdfund = await ProjectCrowdfund.deploy(
           projectCrowdfundFactory.address,
           address2.address,

@@ -44,7 +44,9 @@ export default function Navbar() {
               name={account.data.slice(2, 6) + `-` + account.data.slice(38, 42)}
             />
           ) : requireInstall ? (
-            <Button name="Install Metamask" />
+            <Link href="https://metamask.io/download">
+              <Button name="Install Metamask" />
+            </Link>
           ) : (
             <Button onClick={connect} name="Connect" />
           )}

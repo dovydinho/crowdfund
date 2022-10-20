@@ -68,7 +68,6 @@ contract ProjectCrowdfundFactory {
         projectsCount++;
     }
 
-
     /*
     *   Modifiers
     */
@@ -118,14 +117,14 @@ contract ProjectCrowdfund {
     *  Constants
     */
 
-    // @notice Contribution frequence set to 7 days (in seconds).
+    // @notice Distribution frequence set to 7 days (in seconds).
     uint256 DISTRIBUTION_FREQUENCE = 7 * 24 * 60 * 60;
 
     /*
     * Events
     */
 
-    event Contribution(
+    event NewSponsor(
         address indexed account,
         address indexed project,
         uint256 amount
@@ -244,7 +243,7 @@ contract ProjectCrowdfund {
     }
 
     receive() external payable {
-        emit Contribution(msg.sender, address(this), msg.value);
+        emit NewSponsor(msg.sender, address(this), msg.value);
         if(!isSponsor[msg.sender]) {
             isSponsor[msg.sender] = true;
             sponsor[msg.sender] = Sponsor(msg.sender, msg.value, block.timestamp);
