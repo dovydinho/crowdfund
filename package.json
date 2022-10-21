@@ -24,7 +24,6 @@
     "react-elastic-carousel": "^0.11.5",
     "react-hook-form": "^7.37.0",
     "react-moment": "^1.1.2",
-    "react-simple-typewriter": "^4.0.5",
     "styled-components": "^5.3.6",
     "swiper": "^8.4.4",
     "swr": "^1.3.0"
