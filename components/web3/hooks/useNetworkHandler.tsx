@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 
 const NETWORKS: Object = {
   1: 'Ethereum Main Network',
@@ -16,11 +16,12 @@ const targetNetwork =
   NETWORKS[process.env.NEXT_PUBLIC_TARGET_CHAIN_ID as keyof Object];
 
 export const handler = (provider: any) => () => {
-  const { data, mutate, ...rest } = useSWR(
+  const { mutate } = useSWRConfig();
+  const { data, ...rest } = useSWR(
     () => (provider ? 'web3/network' : null),
     async () => {
-      const network = await provider.getNetwork();
-      const chainId = network.chainId;
+      const network = await provider?.getNetwork();
+      const chainId = network?.chainId;
       return NETWORKS[chainId as keyof Object];
     }
   );
@@ -28,9 +29,9 @@ export const handler = (provider: any) => () => {
   useEffect(() => {
     provider &&
       provider.on('chainChanged', (chainId: string) => {
-        mutate(NETWORKS[parseInt(chainId, 16) as unknown as keyof Object]);
+        NETWORKS[parseInt(chainId, 16) as unknown as keyof Object];
       });
-  }, [provider]);
+  }, [mutate]);
 
   return {
     data,

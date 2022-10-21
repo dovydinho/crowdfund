@@ -1,6 +1,6 @@
 import { handler as createAccountHook } from './useAccountHandler';
 import { handler as createNetworkHook } from './useNetworkHandler';
-import { handler as createProjectsHook } from './useProjectsHandler';
+// import { handler as createProjectsHook } from './useProjectsHandler';
 
 export const setupHooks = ({
   provider,

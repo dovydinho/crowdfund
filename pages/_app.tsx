@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
 import { ScriptProps } from 'next/script';
 import Head from 'next/head';
+import Web3Provider from '@components/web3';
 
 type Page<P = Record<string, never>> = NextPage<P> & {
   Layout: (page: ScriptProps) => JSX.Element;
@@ -24,20 +25,22 @@ function MyApp({ Component, pageProps }: Props) {
   };
 
   return (
-    <Layout>
-      <Head>
-        <title>{meta.title}</title>
-        <meta name="robots" content="follow, index" />
-        <meta content={meta.description} name="description" />
-        <meta property="og:title" content={meta.title} />
-        <meta property="og:url" content="https://crowdfund.dovydas.io" />
+    <Web3Provider>
+      <Layout>
+        <Head>
+          <title>{meta.title}</title>
+          <meta name="robots" content="follow, index" />
+          <meta content={meta.description} name="description" />
+          <meta property="og:title" content={meta.title} />
+          <meta property="og:url" content="https://crowdfund.dovydas.io" />
 
-        <meta property="og:type" content={meta.type} />
-        <meta property="og:site_name" content="Crowdfund" />
-        <meta property="og:description" content={meta.description} />
-      </Head>
-      <Component {...pageProps} />
-    </Layout>
+          <meta property="og:type" content={meta.type} />
+          <meta property="og:site_name" content="Crowdfund" />
+          <meta property="og:description" content={meta.description} />
+        </Head>
+        <Component {...pageProps} />
+      </Layout>
+    </Web3Provider>
   );
 }
 

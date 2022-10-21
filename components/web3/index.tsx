@@ -45,7 +45,8 @@ export default function Web3Provider({ children }: any) {
   useEffect(() => {
     const loadProvider = async () => {
       const provider =
-        window.ethereum && new ethers.providers.Web3Provider(window.ethereum);
+        window.ethereum &&
+        new ethers.providers.Web3Provider(window.ethereum, 'any');
       if (provider) {
         const signer = provider.getSigner();
         const contract = await loadContract(

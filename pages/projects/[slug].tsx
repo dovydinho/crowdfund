@@ -172,15 +172,18 @@ const Project: NextPageWithLayout = ({
             <div className="flex gap-4 justify-center text-gray-300 ">
               <p>
                 0x
-                {projectData[1] &&
-                  projectData[1].slice(2, 6) +
+                {projectSanityData[0] &&
+                  projectSanityData[0]?.address.slice(2, 6) +
                     `-` +
-                    projectData[1].slice(38, 42)}
+                    projectSanityData[0]?.address.slice(38, 42)}
               </p>
               <p>
-                {projectData[3] &&
-                  ethers.utils.formatEther(projectData[3]).toString()}
-                {' ETH / Week'}
+                {projectData[3] && (
+                  <>
+                    {ethers.utils.formatEther(projectData[3]).toString()} ETH /
+                    Week
+                  </>
+                )}
               </p>
             </div>
             <div className="flex justify-center">
@@ -194,7 +197,13 @@ const Project: NextPageWithLayout = ({
               {projectSanityData[0].body}
             </p>
 
-            {account.data && (
+            {!account.data && (
+              <div className="animate-pulse border border-gray-50/25 flex items-center justify-center py-8 rounded-lg bg-gray-50/20 text-xl text-gray-300">
+                Please install Metamask
+              </div>
+            )}
+
+            {provider && (
               <>
                 <div className="w-full font-bold text-center tracking-widest uppercase my-12">
                   <div className="flex justify-center">
@@ -203,7 +212,6 @@ const Project: NextPageWithLayout = ({
                         {ethers.utils.formatEther(projectData[2]).toString()}
                       </h1>
                     )}
-
                     <div className="text-left text-2xl pt-2 my-auto">
                       <h3>ETH</h3>
                       <h3>Balance</h3>
@@ -275,7 +283,7 @@ const Project: NextPageWithLayout = ({
             )}
           </div>
 
-          {account.data && (
+          {provider && (
             <div className="mt-14 flex flex-col sm:flex-row gap-8 text-xl">
               <div className="w-full sm:w-1/2">
                 <div className="flex justify-between mb-4">
