@@ -323,6 +323,10 @@ const Create: NextPageWithLayout = () => {
                   )}
                 </div>
                 <div className="py-8 px-4">
+                  <div className="flex gap-4 items-center justify-center text-gray-400 text-sm">
+                    <p>0x0000-0000</p>
+                    <p>{targetAmount ? targetAmount : '0'} ETH / Week</p>
+                  </div>
                   <h1 className="font-medium text-xl uppercase text-center tracking-widest">
                     {title ? title : 'Project name...'}
                   </h1>

@@ -27,6 +27,15 @@ export default function ProjectCard({ project }) {
             )}
           </div>
           <div className="py-8 px-4">
+            <div className="flex gap-4 items-center justify-center text-gray-400 text-sm">
+              <p>
+                0x
+                {project.address.slice(2, 6) +
+                  `-` +
+                  project.address.slice(38, 42)}
+              </p>
+              <p>{project.targetAmount} ETH / Week</p>
+            </div>
             <h1 className="font-medium text-xl uppercase text-center tracking-widest">
               {project.title}
             </h1>

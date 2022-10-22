@@ -169,7 +169,7 @@ const Project: NextPageWithLayout = ({
             )}
           </div>
           <div className="mt-8 px-4 max-w-xl mx-auto">
-            <div className="flex gap-4 justify-center text-gray-300 ">
+            <div className="flex gap-4 justify-center text-gray-300">
               <p>
                 0x
                 {projectSanityData[0] &&
@@ -177,14 +177,7 @@ const Project: NextPageWithLayout = ({
                     `-` +
                     projectSanityData[0]?.address.slice(38, 42)}
               </p>
-              <p>
-                {projectData[3] && (
-                  <>
-                    {ethers.utils.formatEther(projectData[3]).toString()} ETH /
-                    Week
-                  </>
-                )}
-              </p>
+              <p>{projectSanityData[0]?.targetAmount} ETH / Week</p>
             </div>
             <div className="flex justify-center">
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-widest uppercase">
