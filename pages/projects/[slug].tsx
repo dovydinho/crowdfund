@@ -20,6 +20,10 @@ const Project: NextPageWithLayout = ({
   const [projectData, setProjectData] = useState([]);
   const [projectContract, setProjectContract] = useState(null);
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [buttonUnlockLoading, setButtonUnlockLoading] = useState(false);
+  const [buttonDistributeLoading, setButtonDistributeLoading] = useState(false);
+  const [buttonAddContributorLoading, setButtonAddContributorLoading] =
+    useState(false);
   const [amount, setAmount] = useState();
   const router = useRouter();
   const { provider, hooks } = useWeb3();
@@ -81,6 +85,7 @@ const Project: NextPageWithLayout = ({
   };
 
   const addContributor = async () => {
+    setButtonAddContributorLoading(true);
     const txSigner = provider.getSigner(account.data);
     const projectContractWithSigner = projectContract.connect(txSigner);
     try {
@@ -91,8 +96,10 @@ const Project: NextPageWithLayout = ({
         .patch(projectSanityData[0]?._id)
         .set({ contributorsCount: Number(data[7]) })
         .commit();
+      setButtonAddContributorLoading(false);
     } catch (err) {
       console.log('Operation failed.');
+      setButtonAddContributorLoading(false);
     }
   };
 
@@ -127,21 +134,29 @@ const Project: NextPageWithLayout = ({
   };
 
   const unlockAmount = async () => {
+    setButtonUnlockLoading(true);
     const txSigner = provider.getSigner(account.data);
     const projectContractWithSigner = projectContract.connect(txSigner);
     try {
-      await projectContractWithSigner.unclockAmount();
+      const tx = await projectContractWithSigner.unclockAmount();
+      await tx.wait();
+      setButtonUnlockLoading(false);
     } catch (err) {
       console.log('Operation failed.');
+      setButtonUnlockLoading(false);
     }
   };
   const distributeUnlockedAmount = async () => {
+    setButtonDistributeLoading(true);
     const txSigner = provider.getSigner(account.data);
     const projectContractWithSigner = projectContract.connect(txSigner);
     try {
-      await projectContractWithSigner.distribute();
+      const tx = await projectContractWithSigner.distribute();
+      await tx.wait();
+      setButtonDistributeLoading(false);
     } catch (err) {
       console.log('Operation failed.');
+      setButtonDistributeLoading(false);
     }
   };
 
@@ -231,7 +246,11 @@ const Project: NextPageWithLayout = ({
                               .toString()}{' '}
                             ETH
                           </p>
-                          <Button onClick={unlockAmount} name="Unlock" />
+                          {!buttonUnlockLoading ? (
+                            <Button onClick={unlockAmount} name="Unlock" />
+                          ) : (
+                            <LoadingButton name="Loading..." />
+                          )}
                         </div>
                       )}
                     {projectData[0] &&
@@ -245,10 +264,14 @@ const Project: NextPageWithLayout = ({
                               .toString()}{' '}
                             ETH
                           </p>
-                          <Button
-                            onClick={distributeUnlockedAmount}
-                            name="Distribute"
-                          />
+                          {!buttonDistributeLoading ? (
+                            <Button
+                              onClick={distributeUnlockedAmount}
+                              name="Distribute"
+                            />
+                          ) : (
+                            <LoadingButton name="Loading..." />
+                          )}
                         </div>
                       )}
                   </div>
@@ -304,11 +327,16 @@ const Project: NextPageWithLayout = ({
                         onChange={handleAddressChange}
                         className="w-2/3 p-2 rounded-lg bg-gray-100/20 focus:bg-gray-100/25 border border-gray-100/5 focus:outline-none"
                       />
-                      <Button
-                        type="submit"
-                        className="w-1/3 text-base"
-                        name="Add Contributor"
-                      />
+
+                      {!buttonAddContributorLoading ? (
+                        <Button
+                          type="submit"
+                          className="w-1/3 text-base"
+                          name="Add Contributor"
+                        />
+                      ) : (
+                        <LoadingButton className="text-sm" name="Loading..." />
+                      )}
                     </div>
                   </form>
                 )}
