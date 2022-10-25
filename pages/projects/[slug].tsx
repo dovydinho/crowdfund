@@ -24,10 +24,14 @@ const Project: NextPageWithLayout = ({
   const [buttonDistributeLoading, setButtonDistributeLoading] = useState(false);
   const [buttonAddContributorLoading, setButtonAddContributorLoading] =
     useState(false);
+  const [buttonRemoveContributorLoading, setButtonRemoveContributorLoading] =
+    useState(false);
   const [amount, setAmount] = useState();
   const router = useRouter();
   const { provider, hooks } = useWeb3();
   const account = hooks.useAccount();
+
+  console.log(buttonRemoveContributorLoading);
 
   const slug = router.query.slug;
 
@@ -114,6 +118,7 @@ const Project: NextPageWithLayout = ({
     const txSigner = provider.getSigner(account.data);
     const projectContractWithSigner = projectContract.connect(txSigner);
     try {
+      setButtonRemoveContributorLoading(true);
       const tx = await projectContractWithSigner.removeContributor(
         contributorAddress
       );
@@ -123,8 +128,10 @@ const Project: NextPageWithLayout = ({
         .patch(projectSanityData[0]?._id)
         .set({ contributorsCount: Number(data[7]) })
         .commit();
+      setButtonRemoveContributorLoading(false);
     } catch (err) {
       console.log('Operation failed.');
+      setButtonRemoveContributorLoading(false);
     }
   };
 
@@ -314,6 +321,9 @@ const Project: NextPageWithLayout = ({
                     type="contributors"
                     owner={projectData[0]}
                     onRemoveContributorSubmit={onRemoveContributorSubmit}
+                    buttonRemoveContributorLoading={
+                      buttonRemoveContributorLoading
+                    }
                   />
                 }
                 {projectData[0] == account.data && (
@@ -354,6 +364,7 @@ const Project: NextPageWithLayout = ({
                     type="sponsors"
                     owner={projectData[0]}
                     onRemoveContributorSubmit={null}
+                    buttonRemoveContributorLoading={null}
                   />
                 }
               </div>
@@ -387,7 +398,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-const List = ({ items, type, owner, onRemoveContributorSubmit }) => {
+const List = ({
+  items,
+  type,
+  owner,
+  onRemoveContributorSubmit,
+  buttonRemoveContributorLoading
+}) => {
   const { hooks } = useWeb3();
   const account = hooks.useAccount();
   return (
@@ -410,15 +427,21 @@ const List = ({ items, type, owner, onRemoveContributorSubmit }) => {
                 owner &&
                 account &&
                 owner == account.data &&
-                owner != item[0] && (
+                owner != item[0] &&
+                (buttonRemoveContributorLoading ? (
+                  <LoadingButton
+                    className="bg-red-500/50 hover:bg-red-500/60 text-base"
+                    name="Loading..."
+                  />
+                ) : (
                   <form onSubmit={(e) => onRemoveContributorSubmit(e, item[0])}>
                     <DangerButton
                       type="submit"
-                      className="-my-3"
+                      className="-my-3 text-base"
                       name="Remove"
                     />
                   </form>
-                )}
+                ))}
               {type == 'sponsors' && (
                 <p>{ethers.utils.formatEther(item[1]).toString()} ETH</p>
               )}
