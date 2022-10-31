@@ -31,8 +31,6 @@ const Project: NextPageWithLayout = ({
   const { provider, hooks } = useWeb3();
   const account = hooks.useAccount();
 
-  console.log(buttonRemoveContributorLoading);
-
   const slug = router.query.slug;
 
   useEffect(() => {
