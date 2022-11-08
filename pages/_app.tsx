@@ -16,7 +16,7 @@ type Props = AppProps & {
 const Noop = ({ children }: ScriptProps) => <>{children}</>;
 
 function MyApp({ Component, pageProps }: Props) {
-  const Layout = Component.Layout || Noop;
+  const Layout = Component.Layout ?? Noop;
 
   const meta = {
     title: 'Crowdfund - Web3 Application Demo',
