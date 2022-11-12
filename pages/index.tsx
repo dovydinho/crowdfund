@@ -7,7 +7,7 @@ import {
   MagnifyingGlassMinusIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { sanityClient } from '../sanity';
 import { Project } from '@base/typings';
 import { Swiper, SwiperSlide } from 'swiper/react';
