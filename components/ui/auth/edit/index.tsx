@@ -1,13 +1,13 @@
-import { Button, DangerButton } from '@components/ui/common';
-import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import classNames from 'classnames';
+import { Cog6ToothIcon } from '@heroicons/react/24/outline';
+
+import { Button, DangerButton } from '@components/ui/common';
 import { sanityClient } from '@base/sanity';
 import { CreateFormData } from '@base/typings';
 
 export default function Edit({ project, account }) {
-  const [buttonLoading, setButtonLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState(project?.title);
   const [body, setBody] = useState(project?.body);
@@ -41,16 +41,13 @@ export default function Edit({ project, account }) {
   };
 
   const onSubmit = async (data) => {
-    setButtonLoading(true);
     try {
       sanityClient
         .patch(project?.address)
         .set({ title: title, body: body })
         .commit();
-      setButtonLoading(false);
       setShowModal(false);
     } catch {
-      setButtonLoading(false);
       console.log('Operation failed.');
     }
   };
