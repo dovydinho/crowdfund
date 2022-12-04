@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import cn from 'classnames';
-import { Button } from '@components/ui/common';
+
 import { useWeb3 } from '@components/web3';
+import { Button } from '@components/ui/common';
 import { NetworkError } from '@components/ui/noAuth';
 
 function NavItem({ href, text }) {
@@ -25,7 +26,6 @@ function NavItem({ href, text }) {
 
 export default function Navbar() {
   const { connect, hooks, requireInstall } = useWeb3();
-
   const account = hooks.useAccount();
 
   return (

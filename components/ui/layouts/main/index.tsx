@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+
 import {
   Footer,
   Navbar,
   ScreenSpinner,
   WrongNetwork
 } from '@components/ui/common';
-import { motion } from 'framer-motion';
 import { useWeb3 } from '@components/web3';
 
 export default function MainLayout({ children }) {

@@ -1,8 +1,9 @@
 import { useState, useEffect, createContext, useContext, useMemo } from 'react';
 import { ethers } from 'ethers';
+import { ExternalProvider } from '@ethersproject/providers';
+
 import { setupHooks } from '@components/web3/hooks/setupHooks';
 import { loadContract } from '@utils/index';
-import { ExternalProvider } from '@ethersproject/providers';
 
 declare global {
   interface Window {

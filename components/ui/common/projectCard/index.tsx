@@ -1,6 +1,7 @@
-import { urlFor } from '@base/sanity';
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { urlFor } from '@base/sanity';
 
 export default function ProjectCard({ project }) {
   return (

@@ -1,6 +1,7 @@
-import { sanityClient } from '@base/sanity';
 import { useEffect } from 'react';
 import useSWR from 'swr';
+
+import { sanityClient } from '@base/sanity';
 
 export const handler = (provider: any) => () => {
   const { mutate, ...rest } = useSWR(
