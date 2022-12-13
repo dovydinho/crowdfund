@@ -19,6 +19,8 @@
 .DS_Store
 *.pem
 /yarn.lock
+sanity/node_modules
+keys.json
 
 # debug
 npm-debug.log*
@@ -47,11 +49,3 @@ cache
 /public/artifacts/contracts/Lock.sol
 /public/artifacts/contracts/Crowdfund.sol/ProjectCrowdfund.dbg.json
 /public/artifacts/contracts/Crowdfund.sol/ProjectCrowdfundFactory.dbg.json
-
-#Helper files
-.prettierrc.js
-keys.json
-.eslintrc.json
-
-#CMS
-sanity/node_modules
