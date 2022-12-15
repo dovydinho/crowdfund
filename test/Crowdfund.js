@@ -245,6 +245,39 @@ describe('ProjectCrowdfunds', function () {
         expect(await projectCrowdfund.unlockedAmount()).to.equal(300);
       });
 
+      it('Should unlock ONLY remaining balance amount if target is greater than balance', async function () {
+        projectCrowdfund = await ProjectCrowdfund.deploy(
+          projectCrowdfundFactory.address,
+          address2.address,
+          100
+        );
+        await address1.sendTransaction({
+          to: projectCrowdfund.address,
+          value: 150
+        });
+
+        expect(await projectCrowdfund.unlockedAmount()).to.equal(0);
+        expect(await projectCrowdfund.getBalance()).to.equal(150);
+
+        let week = 7 * 24 * 60 * 60;
+
+        await time.increase(week);
+        await projectCrowdfund.connect(address2).unclockAmount();
+
+        await expect(
+          projectCrowdfund.connect(address2).unclockAmount()
+        ).to.be.revertedWith('Unlock time has not passed');
+        expect(await projectCrowdfund.unlockedAmount()).to.equal(100);
+
+        await time.increase(week);
+        await projectCrowdfund.connect(address2).unclockAmount();
+
+        await expect(
+          projectCrowdfund.connect(address2).unclockAmount()
+        ).to.be.revertedWith('Unlock time has not passed');
+        expect(await projectCrowdfund.unlockedAmount()).to.equal(150);
+      });
+
       it('Should distribute funds to contributors', async function () {
         projectCrowdfund = await ProjectCrowdfund.deploy(
           projectCrowdfundFactory.address,
