@@ -210,9 +210,9 @@ contract ProjectCrowdfund {
         *   @notice Funds should be available for unlock (unlock period passed).
         */
         require(block.timestamp > nextUnlockTime, 'Unlock time has not passed');
-        require(address(this).balance - unlockedAmount > 0, 'No remaining funds to unlock');
+        require(address(this).balance > unlockedAmount, 'No remaining funds to unlock');
 
-        unlockedAmount = (address(this).balance > target) ? unlockedAmount + target : unlockedAmount + address(this).balance;
+        unlockedAmount += (address(this).balance >= target + unlockedAmount) ? target : address(this).balance - unlockedAmount;
         nextUnlockTime += DISTRIBUTION_FREQUENCE;
     }
 
