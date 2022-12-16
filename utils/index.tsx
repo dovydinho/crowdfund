@@ -11,12 +11,7 @@ export const loadContract = async (
   let contract = null;
 
   try {
-    contract = new ethers.Contract(
-      address,
-      //   Artifact.networks[NETWORK_ID].address,
-      Artifact.abi,
-      signer
-    );
+    contract = new ethers.Contract(address, Artifact.abi, signer);
   } catch {
     console.log(`Contract ${name} cannot be loaded.`);
   }
