@@ -1,8 +1,9 @@
 import '../styles/globals.css';
-import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
-import { ScriptProps } from 'next/script';
 import Head from 'next/head';
+import type { AppProps } from 'next/app';
+import { ScriptProps } from 'next/script';
+
 import Web3Provider from '@components/web3';
 
 type Page<P = Record<string, never>> = NextPage<P> & {
