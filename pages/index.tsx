@@ -1,20 +1,22 @@
 import type { GetServerSideProps } from 'next';
-import { ProjectCard } from '@components/ui/common';
-import { MainLayout } from '@components/ui/layouts';
+import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import {
   MagnifyingGlassIcon,
   MagnifyingGlassMinusIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline';
-import { useEffect, useState } from 'react';
-import { sanityClient } from '../sanity';
-import { Project } from '@base/typings';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Pagination, Navigation } from 'swiper';
+import { sanityClient } from '../sanity';
+
+import { ProjectCard } from '@components/ui/common';
+import { MainLayout } from '@components/ui/layouts';
+import { Project } from '@base/typings';
+
 interface Props {
   projectsCollection: Project[];
 }
